@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../onboarding/presentation/onboarding_screen.dart';
+import 'package:project_education/core/config/route/app_navigator.dart';
+import 'package:project_education/core/config/route/app_routes.dart';
 import 'Bloc/splash_bloc.dart';
 import 'Bloc/splash_event.dart';
 import 'Bloc/splash_state.dart';
@@ -15,9 +15,7 @@ class SplashScreen extends StatelessWidget {
     child: BlocListener<SplashBloc, SplashState>(
       listener: (context, state){
         if (state is SplashLoaded) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const OnboardingScreen()),
-          );
+          AppNavigator.pushReplacementNamed(AppRoutes.onboarding);
         }
       },
       child: Scaffold(
