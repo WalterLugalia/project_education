@@ -129,7 +129,7 @@ class _OnboardingView extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   AppButton(
-                    text: 'Next',
+                    text: 'Continue',
                     icon: Icons.arrow_forward,
                     iconFirst: false,
                     isFullWidth: true,
