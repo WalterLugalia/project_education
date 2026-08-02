@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:project_education/feature/authentication/domain/signin_page.dart';
 import 'package:project_education/feature/splash_screen/prsentaion/Splash_screen.dart';
 import 'package:project_education/feature/onboarding/presentation/onboarding_screen.dart';
 import 'app_routes.dart';
@@ -15,6 +16,11 @@ class AppRouteGenerator {
       case AppRoutes.onboarding:
         return _buildRoute(
           const OnboardingScreen(),
+          settings: settings,
+        );
+         case AppRoutes.signInScreen:
+        return _buildRoute(
+          const SignInScreen(),
           settings: settings,
         );
 
