@@ -219,20 +219,20 @@ class AppButton extends StatelessWidget{
     switch (type) {
       case AppButtonType.primary:
         return _AppButtonColors(
-          background: backgroundColor ?? AppColors.accent,
-          text: textColor ?? AppColors.surface,
+          background: backgroundColor ?? AppColors.primaryColor,
+          text: textColor ?? AppColors.textPrimaryColor,
           border: null,
         );
       case AppButtonType.outlined:
         return _AppButtonColors(
           background: backgroundColor ?? Colors.transparent,
-          text: textColor ?? AppColors.accent,
-          border: borderColor ?? AppColors.accent,
+          text: textColor ?? AppColors.primaryColor,
+          border: borderColor ?? AppColors.primaryColor,
         );
       case AppButtonType.text:
         return _AppButtonColors(
           background: null,
-          text: textColor ?? AppColors.accent,
+          text: textColor ?? AppColors.primaryColor,
           border: null,
         );
     }
