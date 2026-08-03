@@ -123,7 +123,7 @@ class _OnboardingView extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: textSubHeadingWidget(
                       text:
-                          'Download books, articles, and docs. Read anywhere — even without internet.',
+                          'Download books, articles, and docs. Read anywhere  \neven without internet.',
                     ),
                   ),
                   const SizedBox(height: 24),

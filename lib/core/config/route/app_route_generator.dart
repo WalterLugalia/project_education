@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:project_education/feature/authentication/domain/signin_page.dart';
+import 'package:project_education/feature/authentication/presentaion/sign_up_screen.dart';
+import 'package:project_education/feature/authentication/presentaion/signin_page.dart';
+import 'package:project_education/feature/home_screen/presentaion/home_screen.dart';
 import 'package:project_education/feature/splash_screen/prsentaion/Splash_screen.dart';
 import 'package:project_education/feature/onboarding/presentation/onboarding_screen.dart';
 import 'app_routes.dart';
@@ -21,6 +23,18 @@ class AppRouteGenerator {
          case AppRoutes.signInScreen:
         return _buildRoute(
           const SignInScreen(),
+          settings: settings,
+        );
+
+        case AppRoutes.signUp:
+        return _buildRoute(
+          const SignUpScreen(),
+          settings: settings,
+        );
+
+        case AppRoutes.home:
+        return _buildRoute(
+          const HomeScreen(),
           settings: settings,
         );
 
