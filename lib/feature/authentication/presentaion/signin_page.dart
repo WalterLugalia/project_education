@@ -1,15 +1,18 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_education/core/config/route/app_routes.dart';
 import 'package:project_education/core/config/theme/app_colors.dart';
 import 'package:project_education/core/utils/shared_widgets/app_button.dart';
+import 'package:project_education/core/utils/validators.dart';
 import 'package:project_education/feature/authentication/presentaion/bloc/auth_bloc.dart';
 import 'package:project_education/feature/authentication/presentaion/bloc/auth_event.dart';
-import 'package:project_education/feature/authentication/presentaion/bloc/auth_state.dart' show AuthState, AuthSuccess, AuthFailure, AuthLoading;
+import 'package:project_education/feature/authentication/presentaion/bloc/auth_state.dart'   show AuthState, AuthSuccess, AuthFailure, AuthLoading;
+import 'package:project_education/feature/authentication/presentaion/widgets/app_social_button.dart';
+import 'package:project_education/feature/authentication/presentaion/widgets/auth_bottom_prompt.dart';
+import 'package:project_education/feature/authentication/presentaion/widgets/auth_divider.dart';
 import 'package:project_education/injection_container.dart';
+import 'package:project_education/shared/widgets/app_text_field.dart';
 import 'package:project_education/shared/widgets/text_widget.dart';
-
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
@@ -34,26 +37,12 @@ class _SignInViewState extends State<_SignInView> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-
-  String? _validateEmail(String? value) {
-    if (value == null || value.trim().isEmpty) return 'Email is required';
-    final emailRegex = RegExp(r'^[\w\.\-]+@([\w\-]+\.)+[\w\-]{2,4}$');
-    if (!emailRegex.hasMatch(value.trim())) return 'Enter a valid email';
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) return 'Password is required';
-    if (value.length < 6) return 'Password must be at least 6 characters';
-    return null;
   }
 
   void _submit(BuildContext context) {
@@ -104,24 +93,16 @@ class _SignInViewState extends State<_SignInView> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           alignment: Alignment.center,
-                          child: const Text(
-                            'L',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
+                          child: Image.asset(
+                'assets/logo.png',
+                width: 130,
+                height: 150,
+              ),
                         ),
                         const SizedBox(width: 10),
-                        Text(
-                          'Learnly',
-                          style: TextStyle(
-                            color: AppColors.textPrimaryColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                        textSubHeadingWidget(
+                text: 'LearnSHelf',
+              )
                       ],
                     ),
                     const SizedBox(height: 32),
@@ -131,7 +112,7 @@ class _SignInViewState extends State<_SignInView> {
                     textSubHeadingWidget(text: 'Pick up where your curiosity left off.'),
                     const SizedBox(height: 28),
 
-                    _SocialButton(
+                    AppSocialButton(
                       label: 'Continue with Google',
                       icon: Icons.g_mobiledata,
                       onPressed: () {
@@ -141,7 +122,7 @@ class _SignInViewState extends State<_SignInView> {
                       },
                     ),
                     const SizedBox(height: 12),
-                    _SocialButton(
+                    AppSocialButton(
                       label: 'Continue with GitHub',
                       icon: Icons.code,
                       onPressed: () {
@@ -152,61 +133,26 @@ class _SignInViewState extends State<_SignInView> {
                     ),
                     const SizedBox(height: 24),
 
-                    Row(
-                      children: [
-                        Expanded(child: Divider(color: AppColors.textBodyColor.withOpacity(0.3))),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            'OR CONTINUE WITH EMAIL',
-                            style: TextStyle(
-                              color: AppColors.textBodyColor,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                        Expanded(child: Divider(color: AppColors.textBodyColor.withOpacity(0.3))),
-                      ],
-                    ),
+                    const AuthDivider(label: 'OR CONTINUE WITH EMAIL'),
                     const SizedBox(height: 24),
 
-                    Text('Email address', style: TextStyle(color: AppColors.textPrimaryColor, fontWeight: FontWeight.w500)),
-                    const SizedBox(height: 8),
-                    TextFormField(
+                    AppTextField(
+                      label: 'Email address',
+                      hint: 'you@example.com',
                       controller: _emailController,
+                      prefixIcon: Icons.mail_outline,
                       keyboardType: TextInputType.emailAddress,
-                      validator: _validateEmail,
-                      style: TextStyle(color: AppColors.textPrimaryColor),
-                      decoration: InputDecoration(
-                        hintText: 'you@example.com',
-                        prefixIcon: const Icon(Icons.mail_outline),
-                        filled: true,
-                        fillColor: AppColors.backgroundColor,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
+                      validator: Validators.email,
                     ),
                     const SizedBox(height: 18),
 
-                    Text('Password', style: TextStyle(color: AppColors.textPrimaryColor, fontWeight: FontWeight.w500)),
-                    const SizedBox(height: 8),
-                    TextFormField(
+                    AppTextField(
+                      label: 'Password',
+                      hint: 'Enter your password',
                       controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      validator: _validatePassword,
-                      style: TextStyle(color: AppColors.textPrimaryColor),
-                      decoration: InputDecoration(
-                        hintText: 'Enter your password',
-                        prefixIcon: const Icon(Icons.lock_outline),
-                        suffixIcon: IconButton(
-                          icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
-                          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                        ),
-                        filled: true,
-                        fillColor: AppColors.backgroundColor,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
+                      prefixIcon: Icons.lock_outline,
+                      isPassword: true,
+                      validator: Validators.password,
                     ),
                     const SizedBox(height: 8),
 
@@ -229,61 +175,16 @@ class _SignInViewState extends State<_SignInView> {
                     ),
                     const SizedBox(height: 20),
 
-                    Center(
-                      child: RichText(
-                        text: TextSpan(
-                          style: TextStyle(color: AppColors.textBodyColor),
-                          children: [
-                            const TextSpan(text: "Don't have an account? "),
-                            TextSpan(
-                              text: 'Sign Up',
-                              style: TextStyle(color: AppColors.primaryColor, fontWeight: FontWeight.w600),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.of(context).pushReplacementNamed(AppRoutes.signUp);
-                                },
-                            ),
-                          ],
-                        ),
-                      ),
+                    AuthBottomPrompt(
+                      promptText: "Don't have an account? ",
+                      actionText: 'Sign Up',
+                      onActionTap: () => Navigator.of(context).pushReplacementNamed(AppRoutes.signUp),
                     ),
                   ],
                 ),
               ),
             );
           },
-        ),
-      ),
-    );
-  }
-}
-
-class _SocialButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback onPressed;
-
-  const _SocialButton({
-    required this.label,
-    required this.icon,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 48,
-      child: OutlinedButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon, color: AppColors.textPrimaryColor),
-        label: Text(
-          label,
-          style: TextStyle(color: AppColors.textPrimaryColor, fontWeight: FontWeight.w600),
-        ),
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(color: AppColors.textBodyColor.withOpacity(0.3)),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );

@@ -1,15 +1,20 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_education/core/config/route/app_routes.dart';
 import 'package:project_education/core/config/theme/app_colors.dart';
 import 'package:project_education/core/utils/shared_widgets/app_button.dart';
+import 'package:project_education/core/utils/validators.dart';
 import 'package:project_education/feature/authentication/presentaion/bloc/auth_bloc.dart';
 import 'package:project_education/feature/authentication/presentaion/bloc/auth_event.dart';
 import 'package:project_education/feature/authentication/presentaion/bloc/auth_state.dart';
+import 'package:project_education/feature/authentication/presentaion/widgets/app_social_button.dart';
+import 'package:project_education/feature/authentication/presentaion/widgets/auth_bottom_prompt.dart';
+import 'package:project_education/feature/authentication/presentaion/widgets/auth_divider.dart';
 import 'package:project_education/injection_container.dart';
+import 'package:project_education/shared/widgets/app_text_field.dart';
 import 'package:project_education/shared/widgets/text_widget.dart';
 
+import 'package:flutter/gestures.dart';
 
 enum _PasswordStrength { empty, weak, fair, good, strong }
 
@@ -40,8 +45,6 @@ class _SignUpViewState extends State<_SignUpView> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
   bool _agreedToTerms = false;
   _PasswordStrength _strength = _PasswordStrength.empty;
 
@@ -90,35 +93,6 @@ class _SignUpViewState extends State<_SignUpView> {
     if (next != _strength) {
       setState(() => _strength = next);
     }
-  }
-
-  String? _validateFirstName(String? value) {
-    if (value == null || value.trim().isEmpty) return 'First name is required';
-    return null;
-  }
-
-  String? _validateLastName(String? value) {
-    if (value == null || value.trim().isEmpty) return 'Last name is required';
-    return null;
-  }
-
-  String? _validateEmail(String? value) {
-    if (value == null || value.trim().isEmpty) return 'Email is required';
-    final emailRegex = RegExp(r'^[\w\.\-]+@([\w\-]+\.)+[\w\-]{2,4}$');
-    if (!emailRegex.hasMatch(value.trim())) return 'Enter a valid email';
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) return 'Password is required';
-    if (value.length < 6) return 'Password must be at least 6 characters';
-    return null;
-  }
-
-  String? _validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) return 'Please confirm your password';
-    if (value != _passwordController.text) return 'Passwords do not match';
-    return null;
   }
 
   void _submit(BuildContext context) {
@@ -173,7 +147,7 @@ class _SignUpViewState extends State<_SignUpView> {
                     textSubHeadingWidget(text: 'Start your learning journey today.'),
                     const SizedBox(height: 24),
 
-                    _SocialButton(
+                    AppSocialButton(
                       label: 'Continue with Google',
                       icon: Icons.g_mobiledata,
                       onPressed: () {
@@ -183,7 +157,7 @@ class _SignUpViewState extends State<_SignUpView> {
                       },
                     ),
                     const SizedBox(height: 12),
-                    _SocialButton(
+                    AppSocialButton(
                       label: 'Continue with GitHub',
                       icon: Icons.code,
                       onPressed: () {
@@ -194,24 +168,7 @@ class _SignUpViewState extends State<_SignUpView> {
                     ),
                     const SizedBox(height: 24),
 
-                    Row(
-                      children: [
-                        Expanded(child: Divider(color: AppColors.textBodyColor.withOpacity(0.3))),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            'OR SIGN UP WITH EMAIL',
-                            style: TextStyle(
-                              color: AppColors.textBodyColor,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                        Expanded(child: Divider(color: AppColors.textBodyColor.withOpacity(0.3))),
-                      ],
-                    ),
+                    const AuthDivider(label: 'OR SIGN UP WITH EMAIL'),
                     const SizedBox(height: 24),
 
                     // First name / Last name
@@ -219,81 +176,56 @@ class _SignUpViewState extends State<_SignUpView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: _LabeledField(
+                          child: AppTextField(
                             label: 'First Name',
-                            child: TextFormField(
-                              controller: _firstNameController,
-                              validator: _validateFirstName,
-                              style: TextStyle(color: AppColors.textPrimaryColor),
-                              decoration: _fieldDecoration(hint: 'Alex', prefixIcon: Icons.person_outline),
-                            ),
+                            hint: 'Alex',
+                            controller: _firstNameController,
+                            prefixIcon: Icons.person_outline,
+                            validator: (value) => Validators.requiredField(value, fieldName: 'First name'),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: _LabeledField(
+                          child: AppTextField(
                             label: 'Last Name',
-                            child: TextFormField(
-                              controller: _lastNameController,
-                              validator: _validateLastName,
-                              style: TextStyle(color: AppColors.textPrimaryColor),
-                              decoration: _fieldDecoration(hint: 'Johnson'),
-                            ),
+                            hint: 'Johnson',
+                            controller: _lastNameController,
+                            validator: (value) => Validators.requiredField(value, fieldName: 'Last name'),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 18),
 
-                    _LabeledField(
+                    AppTextField(
                       label: 'Email address',
-                      child: TextFormField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        validator: _validateEmail,
-                        style: TextStyle(color: AppColors.textPrimaryColor),
-                        decoration: _fieldDecoration(hint: 'you@example.com', prefixIcon: Icons.mail_outline),
-                      ),
+                      hint: 'you@example.com',
+                      controller: _emailController,
+                      prefixIcon: Icons.mail_outline,
+                      keyboardType: TextInputType.emailAddress,
+                      validator: Validators.email,
                     ),
                     const SizedBox(height: 18),
 
-                    _LabeledField(
+                    AppTextField(
                       label: 'Password',
-                      child: TextFormField(
-                        controller: _passwordController,
-                        obscureText: _obscurePassword,
-                        validator: _validatePassword,
-                        style: TextStyle(color: AppColors.textPrimaryColor),
-                        decoration: _fieldDecoration(
-                          hint: 'Create a password',
-                          prefixIcon: Icons.lock_outline,
-                          suffixIcon: IconButton(
-                            icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
-                            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                          ),
-                        ),
-                      ),
+                      hint: 'Create a password',
+                      controller: _passwordController,
+                      prefixIcon: Icons.lock_outline,
+                      isPassword: true,
+                      validator: Validators.password,
                     ),
                     const SizedBox(height: 8),
                     _PasswordStrengthMeter(strength: _strength),
                     const SizedBox(height: 18),
 
-                    _LabeledField(
+                    AppTextField(
                       label: 'Confirm Password',
-                      child: TextFormField(
-                        controller: _confirmPasswordController,
-                        obscureText: _obscureConfirmPassword,
-                        validator: _validateConfirmPassword,
-                        style: TextStyle(color: AppColors.textPrimaryColor),
-                        decoration: _fieldDecoration(
-                          hint: 'Repeat your password',
-                          prefixIcon: Icons.lock_outline,
-                          suffixIcon: IconButton(
-                            icon: Icon(_obscureConfirmPassword ? Icons.visibility_off : Icons.visibility),
-                            onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
-                          ),
-                        ),
-                      ),
+                      hint: 'Repeat your password',
+                      controller: _confirmPasswordController,
+                      prefixIcon: Icons.lock_outline,
+                      isPassword: true,
+                      validator: (value) => Validators.confirmPassword(value, _passwordController.text),
                     ),
                     const SizedBox(height: 16),
 
@@ -350,23 +282,10 @@ class _SignUpViewState extends State<_SignUpView> {
                     ),
                     const SizedBox(height: 20),
 
-                    Center(
-                      child: RichText(
-                        text: TextSpan(
-                          style: TextStyle(color: AppColors.textBodyColor),
-                          children: [
-                            const TextSpan(text: 'Already have an account? '),
-                            TextSpan(
-                              text: 'Sign In',
-                              style: TextStyle(color: AppColors.primaryColor, fontWeight: FontWeight.w600),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.of(context).pushReplacementNamed(AppRoutes.signInScreen);
-                                },
-                            ),
-                          ],
-                        ),
-                      ),
+                    AuthBottomPrompt(
+                      promptText: 'Already have an account? ',
+                      actionText: 'Sign In',
+                      onActionTap: () => Navigator.of(context).pushReplacementNamed(AppRoutes.signInScreen),
                     ),
                   ],
                 ),
@@ -375,40 +294,6 @@ class _SignUpViewState extends State<_SignUpView> {
           },
         ),
       ),
-    );
-  }
-
-  InputDecoration _fieldDecoration({
-    required String hint,
-    IconData? prefixIcon,
-    Widget? suffixIcon,
-  }) {
-    return InputDecoration(
-      hintText: hint,
-      prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
-      suffixIcon: suffixIcon,
-      filled: true,
-      fillColor: AppColors.backgroundColor,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-    );
-  }
-}
-
-class _LabeledField extends StatelessWidget {
-  final String label;
-  final Widget child;
-
-  const _LabeledField({required this.label, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: TextStyle(color: AppColors.textPrimaryColor, fontWeight: FontWeight.w500)),
-        const SizedBox(height: 8),
-        child,
-      ],
     );
   }
 }
@@ -489,31 +374,6 @@ class _PasswordStrengthMeter extends StatelessWidget {
         const SizedBox(width: 10),
         Text(_label, style: TextStyle(color: _color, fontSize: 12, fontWeight: FontWeight.w600)),
       ],
-    );
-  }
-}
-
-class _SocialButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback onPressed;
-
-  const _SocialButton({required this.label, required this.icon, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 48,
-      child: OutlinedButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon, color: AppColors.textPrimaryColor),
-        label: Text(label, style: TextStyle(color: AppColors.textPrimaryColor, fontWeight: FontWeight.w600)),
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(color: AppColors.textBodyColor.withOpacity(0.3)),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      ),
     );
   }
 }
