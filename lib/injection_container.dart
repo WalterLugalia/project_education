@@ -12,19 +12,28 @@ import 'package:project_education/feature/onboarding/domain/onboarding_repositor
 import 'package:project_education/feature/onboarding/presentation/bloc/onboarding_bloc.dart';
 
 // Auth
-
 import 'package:project_education/feature/authentication/data/datasource/auth_remote_data_source.dart';
 import 'package:project_education/feature/authentication/data/repositories/auth_repository_impl.dart';
 import 'package:project_education/feature/authentication/domain/repositories/auth_repository.dart';
 import 'package:project_education/feature/authentication/domain/usecase/sign_in_usecase.dart';
 import 'package:project_education/feature/authentication/domain/usecase/sign_up_usecase.dart';
+import 'package:project_education/feature/authentication/domain/usecase/resend_verification_email_usecase.dart';
+import 'package:project_education/feature/authentication/domain/usecase/send_password_reset_email_usecase.dart';
+import 'package:project_education/feature/authentication/domain/usecase/update_password_usecase.dart';
+import 'package:project_education/feature/authentication/domain/usecase/check_email_verified_usecase.dart';
+import 'package:project_education/feature/authentication/domain/usecase/get_cached_user_usecase.dart';
+import 'package:project_education/feature/authentication/domain/usecase/sign_out_usecase.dart';
 import 'package:project_education/feature/authentication/presentaion/bloc/auth_bloc.dart';
+
+// Splash
+import 'package:project_education/feature/splash_screen/prsentaion/Bloc/splash_bloc.dart';
 
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
   await _initOnboarding();
   await _initAuth();
+  await _initSplash();
 
   // Other features' init calls go here
 }
@@ -67,12 +76,33 @@ Future<void> _initAuth() async {
     () => AuthBloc(
       signInUseCase: sl(),
       signUpUseCase: sl(),
+      resendVerificationEmailUseCase: sl(),
+      sendPasswordResetEmailUseCase: sl(),
+      updatePasswordUseCase: sl(),
+      checkEmailVerifiedUseCase: sl(),
+      signOutUseCase: sl(),
     ),
   );
 
   // Use cases
   sl.registerLazySingleton<SignInUseCase>(() => SignInUseCase(sl()));
   sl.registerLazySingleton<SignUpUseCase>(() => SignUpUseCase(sl()));
+  sl.registerLazySingleton<ResendVerificationEmailUseCase>(
+    () => ResendVerificationEmailUseCase(sl()),
+  );
+  sl.registerLazySingleton<SendPasswordResetEmailUseCase>(
+    () => SendPasswordResetEmailUseCase(sl()),
+  );
+  sl.registerLazySingleton<UpdatePasswordUseCase>(
+    () => UpdatePasswordUseCase(sl()),
+  );
+  sl.registerLazySingleton<CheckEmailVerifiedUseCase>(
+    () => CheckEmailVerifiedUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetCachedUserUseCase>(
+    () => GetCachedUserUseCase(sl()),
+  );
+  sl.registerLazySingleton<SignOutUseCase>(() => SignOutUseCase(sl()));
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(
@@ -87,4 +117,16 @@ Future<void> _initAuth() async {
   // Only register this if SupabaseClient isn't already registered
   // elsewhere in your DI setup — get_it throws if a type is registered twice.
   sl.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
+}
+
+Future<void> _initSplash() async {
+  // Bloc — factory: a fresh instance every time the splash screen is built
+  sl.registerFactory<SplashBloc>(
+    () => SplashBloc(
+      onboardingBox: sl<Box<bool>>(),
+      getCachedUserUseCase: sl(),
+      checkEmailVerifiedUseCase: sl(),
+      signOutUseCase: sl(),
+    ),
+  );
 }

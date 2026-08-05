@@ -7,4 +7,11 @@ abstract class SplashState extends Equatable {
 }
 
 class SplashInitial extends SplashState {}
-class SplashLoaded extends SplashState {}
+
+class SplashNavigateToOnboarding extends SplashState {}
+
+class SplashNavigateToSignIn extends SplashState {}
+
+class SplashNavigateToSignInUnverified extends SplashState {}
+
+class SplashNavigateToHome extends SplashState {}

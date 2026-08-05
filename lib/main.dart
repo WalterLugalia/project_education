@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:project_education/core/constants/supabase_constants.dart';
+import 'package:project_education/core/services/deep_link_handler.dart';
 import 'package:project_education/injection_container.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/config/route/app_navigator.dart';
@@ -24,6 +25,9 @@ void main() async {
 
   // Initialize dependency injection
   await initDependencies();
+
+  // Start listening for deep links (email verification, password recovery)
+  await DeepLinkHandler.instance.init();
 
   runApp(const MyApp());
 }

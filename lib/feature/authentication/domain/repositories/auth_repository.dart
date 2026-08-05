@@ -9,4 +9,18 @@ abstract class AuthRepository {
     required String firstName,
     required String lastName,
   });
+
+  Future<void> resendVerificationEmail({required String email});
+
+  Future<void> sendPasswordResetEmail({required String email});
+
+  Future<void> updatePassword({required String newPassword});
+
+  /// Returns the locally cached user without a network call (offline-safe).
+  UserEntity? getCachedUser();
+
+  /// Forces a fresh fetch from Supabase to get up-to-date verification status.
+  Future<UserEntity> refreshUser();
+
+  Future<void> signOut();
 }

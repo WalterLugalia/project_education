@@ -120,11 +120,13 @@ class _SignUpViewState extends State<_SignUpView> {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
-        child: BlocConsumer<AuthBloc, AuthState>(
+        child: BlocConsumer<AuthBloc, AppAuthState>(
           listener: (context, state) {
             if (state is AuthSuccess) {
-              // TODO: replace with your actual post-signup destination
-              Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+              Navigator.of(context).pushReplacementNamed(
+                AppRoutes.checkYourEmail,
+                arguments: state.user.email,
+              );
             }
             if (state is AuthFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -181,7 +183,8 @@ class _SignUpViewState extends State<_SignUpView> {
                             hint: 'Alex',
                             controller: _firstNameController,
                             prefixIcon: Icons.person_outline,
-                            validator: (value) => Validators.requiredField(value, fieldName: 'First name'),
+                            validator: (value) =>
+                                Validators.requiredField(value, fieldName: 'First name'),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -190,7 +193,8 @@ class _SignUpViewState extends State<_SignUpView> {
                             label: 'Last Name',
                             hint: 'Johnson',
                             controller: _lastNameController,
-                            validator: (value) => Validators.requiredField(value, fieldName: 'Last name'),
+                            validator: (value) =>
+                                Validators.requiredField(value, fieldName: 'Last name'),
                           ),
                         ),
                       ],
@@ -225,7 +229,8 @@ class _SignUpViewState extends State<_SignUpView> {
                       controller: _confirmPasswordController,
                       prefixIcon: Icons.lock_outline,
                       isPassword: true,
-                      validator: (value) => Validators.confirmPassword(value, _passwordController.text),
+                      validator: (value) =>
+                          Validators.confirmPassword(value, _passwordController.text),
                     ),
                     const SizedBox(height: 16),
 

@@ -27,4 +27,28 @@ class AuthRepositoryImpl implements AuthRepository {
       lastName: lastName,
     );
   }
+
+  @override
+  Future<void> resendVerificationEmail({required String email}) {
+    return remoteDataSource.resendVerificationEmail(email: email);
+  }
+
+  @override
+  Future<void> sendPasswordResetEmail({required String email}) {
+    return remoteDataSource.sendPasswordResetEmail(email: email);
+  }
+
+  @override
+  Future<void> updatePassword({required String newPassword}) {
+    return remoteDataSource.updatePassword(newPassword: newPassword);
+  }
+
+  @override
+  UserEntity? getCachedUser() => remoteDataSource.getCachedUser();
+
+  @override
+  Future<UserEntity> refreshUser() => remoteDataSource.refreshUser();
+
+  @override
+  Future<void> signOut() => remoteDataSource.signOut();
 }

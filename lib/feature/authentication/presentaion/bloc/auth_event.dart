@@ -33,3 +33,47 @@ class SignUpRequested extends AuthEvent {
   @override
   List<Object?> get props => [email, password, firstName, lastName];
 }
+
+class CheckEmailVerificationRequested extends AuthEvent {
+  const CheckEmailVerificationRequested();
+}
+
+class ResendVerificationRequested extends AuthEvent {
+  final String email;
+
+  const ResendVerificationRequested({required this.email});
+
+  @override
+  List<Object?> get props => [email];
+}
+
+class ForgotPasswordRequested extends AuthEvent {
+  final String email;
+
+  const ForgotPasswordRequested({required this.email});
+
+  @override
+  List<Object?> get props => [email];
+}
+
+class ResetPasswordRequested extends AuthEvent {
+  final String newPassword;
+
+  const ResetPasswordRequested({required this.newPassword});
+
+  @override
+  List<Object?> get props => [newPassword];
+}
+
+class ChangePasswordRequested extends AuthEvent {
+  final String newPassword;
+
+  const ChangePasswordRequested({required this.newPassword});
+
+  @override
+  List<Object?> get props => [newPassword];
+}
+
+class SignOutRequested extends AuthEvent {
+  const SignOutRequested();
+}

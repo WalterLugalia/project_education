@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:project_education/feature/authentication/presentaion/sign_up_screen.dart';
 import 'package:project_education/feature/authentication/presentaion/signin_page.dart';
+import 'package:project_education/feature/authentication/presentaion/pages/check_your_email_screen.dart';
+import 'package:project_education/feature/authentication/presentaion/pages/email_verified_success_screen.dart';
+import 'package:project_education/feature/authentication/presentaion/pages/forgot_password_screen.dart';
+import 'package:project_education/feature/authentication/presentaion/pages/reset_password_screen.dart';
+import 'package:project_education/feature/authentication/presentaion/pages/change_password_screen.dart';
 import 'package:project_education/feature/home_screen/presentaion/home_screen.dart';
 import 'package:project_education/feature/splash_screen/prsentaion/Splash_screen.dart';
 import 'package:project_education/feature/onboarding/presentation/onboarding_screen.dart';
@@ -20,21 +25,53 @@ class AppRouteGenerator {
           const OnboardingScreen(),
           settings: settings,
         );
-         case AppRoutes.signInScreen:
+
+      case AppRoutes.signInScreen:
         return _buildRoute(
           const SignInScreen(),
           settings: settings,
         );
 
-        case AppRoutes.signUp:
+      case AppRoutes.signUp:
         return _buildRoute(
           const SignUpScreen(),
           settings: settings,
         );
 
-        case AppRoutes.home:
+      case AppRoutes.home:
         return _buildRoute(
           const HomeScreen(),
+          settings: settings,
+        );
+
+      case AppRoutes.checkYourEmail:
+        final email = settings.arguments as String? ?? '';
+        return _buildRoute(
+          CheckYourEmailScreen(email: email),
+          settings: settings,
+        );
+
+      case AppRoutes.emailVerifiedSuccess:
+        return _buildRoute(
+          const EmailVerifiedSuccessScreen(),
+          settings: settings,
+        );
+
+      case AppRoutes.forgotPassword:
+        return _buildRoute(
+          const ForgotPasswordScreen(),
+          settings: settings,
+        );
+
+      case AppRoutes.resetPassword:
+        return _buildRoute(
+          const ResetPasswordScreen(),
+          settings: settings,
+        );
+
+      case AppRoutes.changePassword:
+        return _buildRoute(
+          const ChangePasswordScreen(),
           settings: settings,
         );
 
@@ -47,9 +84,9 @@ class AppRouteGenerator {
   }
 
   static PageRoute _buildRoute(
-      Widget page, {
-        required RouteSettings settings,
-      }) {
+    Widget page, {
+    required RouteSettings settings,
+  }) {
     return MaterialPageRoute(
       settings: settings,
       builder: (_) => page,

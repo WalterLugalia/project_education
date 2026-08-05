@@ -6,7 +6,7 @@ import 'package:project_education/core/utils/shared_widgets/app_button.dart';
 import 'package:project_education/core/utils/validators.dart';
 import 'package:project_education/feature/authentication/presentaion/bloc/auth_bloc.dart';
 import 'package:project_education/feature/authentication/presentaion/bloc/auth_event.dart';
-import 'package:project_education/feature/authentication/presentaion/bloc/auth_state.dart'   show AuthState, AuthSuccess, AuthFailure, AuthLoading;
+import 'package:project_education/feature/authentication/presentaion/bloc/auth_state.dart';
 import 'package:project_education/feature/authentication/presentaion/widgets/app_social_button.dart';
 import 'package:project_education/feature/authentication/presentaion/widgets/auth_bottom_prompt.dart';
 import 'package:project_education/feature/authentication/presentaion/widgets/auth_divider.dart';
@@ -61,11 +61,16 @@ class _SignInViewState extends State<_SignInView> {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
-        child: BlocConsumer<AuthBloc, AuthState>(
+        child: BlocConsumer<AuthBloc, AppAuthState>(
           listener: (context, state) {
             if (state is AuthSuccess) {
-              // TODO: replace with your actual post-login destination
               Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+            }
+            if (state is AuthEmailNotVerified) {
+              Navigator.of(context).pushNamed(
+                AppRoutes.checkYourEmail,
+                arguments: state.email,
+              );
             }
             if (state is AuthFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -94,15 +99,13 @@ class _SignInViewState extends State<_SignInView> {
                           ),
                           alignment: Alignment.center,
                           child: Image.asset(
-                'assets/logo.png',
-                width: 130,
-                height: 150,
-              ),
+                            'assets/logo.png',
+                            width: 130,
+                            height: 150,
+                          ),
                         ),
                         const SizedBox(width: 10),
-                        textSubHeadingWidget(
-                text: 'LearnSHelf',
-              )
+                        textSubHeadingWidget(text: 'LearnSHelf'),
                       ],
                     ),
                     const SizedBox(height: 32),
@@ -159,9 +162,8 @@ class _SignInViewState extends State<_SignInView> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                        onPressed: () {
-                          // TODO: wire up forgot-password flow
-                        },
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed(AppRoutes.forgotPassword),
                         child: Text('Forgot password?', style: TextStyle(color: AppColors.primaryColor)),
                       ),
                     ),
