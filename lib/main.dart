@@ -16,6 +16,7 @@ void main() async {
   // Initialize Hive
   await Hive.initFlutter();
   await Hive.openBox<bool>(HiveConstants.onboardingBox);
+  await Hive.openBox<String>(HiveConstants.resourceCacheBox);
 
   // Initialize Supabase
   await Supabase.initialize(

@@ -3,4 +3,5 @@ class HiveConstants {
 
   static const String onboardingBox = 'onboardingBox';
   static const String hasSeenOnboardingKey = 'hasSeenOnboarding';
+  static const String resourceCacheBox = 'resourceCacheBox';
 }

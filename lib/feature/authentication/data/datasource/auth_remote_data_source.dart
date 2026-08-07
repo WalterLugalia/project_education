@@ -29,7 +29,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   AuthRemoteDataSourceImpl({required this.supabaseClient});
 
-  static const String _redirectUrl = 'learnshelf://auth-callback';
+  static const String _redirectUrl = 'https://learnshelf-auth.kifwolow.workers.dev';
 
   @override
   Future<UserModel> signIn({required String email, required String password}) async {

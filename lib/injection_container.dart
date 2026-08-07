@@ -25,6 +25,17 @@ import 'package:project_education/feature/authentication/domain/usecase/get_cach
 import 'package:project_education/feature/authentication/domain/usecase/sign_out_usecase.dart';
 import 'package:project_education/feature/authentication/presentaion/bloc/auth_bloc.dart';
 
+
+// Resources
+import 'package:project_education/feature/resources/data/datasource/resource_remote_data_source.dart';
+import 'package:project_education/feature/resources/data/datasource/resource_local_data_source.dart';
+import 'package:project_education/feature/resources/data/repositories/resource_repository_impl.dart';
+import 'package:project_education/feature/resources/domain/repositories/resource_repository.dart';
+import 'package:project_education/feature/resources/domain/usecase/get_home_feed_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/get_categories_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/toggle_bookmark_usecase.dart';
+import 'package:project_education/feature/resources/presentaion/bloc/home_bloc.dart';
+
 // Splash
 import 'package:project_education/feature/splash_screen/prsentaion/Bloc/splash_bloc.dart';
 
@@ -34,6 +45,7 @@ Future<void> initDependencies() async {
   await _initOnboarding();
   await _initAuth();
   await _initSplash();
+  await _initResources();
 
   // Other features' init calls go here
 }
@@ -127,6 +139,39 @@ Future<void> _initSplash() async {
       getCachedUserUseCase: sl(),
       checkEmailVerifiedUseCase: sl(),
       signOutUseCase: sl(),
+    ),
+  );
+}
+
+
+
+Future<void> _initResources() async {
+  sl.registerFactory<HomeBloc>(
+    () => HomeBloc(
+      getHomeFeedUseCase: sl(),
+      getCategoriesUseCase: sl(),
+      toggleBookmarkUseCase: sl(),
+    ),
+  );
+
+  sl.registerLazySingleton<GetHomeFeedUseCase>(() => GetHomeFeedUseCase(sl()));
+  sl.registerLazySingleton<GetCategoriesUseCase>(() => GetCategoriesUseCase(sl()));
+  sl.registerLazySingleton<ToggleBookmarkUseCase>(() => ToggleBookmarkUseCase(sl()));
+
+  sl.registerLazySingleton<ResourceRepository>(
+    () => ResourceRepositoryImpl(
+      remoteDataSource: sl(),
+      localDataSource: sl(),
+    ),
+  );
+
+  sl.registerLazySingleton<ResourceRemoteDataSource>(
+    () => ResourceRemoteDataSourceImpl(supabaseClient: sl()),
+  );
+
+  sl.registerLazySingleton<ResourceLocalDataSource>(
+    () => ResourceLocalDataSourceImpl(
+      cacheBox: Hive.box<String>(HiveConstants.resourceCacheBox),
     ),
   );
 }

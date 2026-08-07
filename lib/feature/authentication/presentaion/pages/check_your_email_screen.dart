@@ -136,13 +136,11 @@ class _CheckYourEmailViewState extends State<_CheckYourEmailView> {
                   const SizedBox(height: 12),
 
                   AppButton(
-                    text: isChecking ? 'Checking...' : "I've Verified My Email",
-                    isFullWidth: true,
-                    isLoading: isChecking,
-                    onPressed: () => context
-                        .read<AuthBloc>()
-                        .add(const CheckEmailVerificationRequested()),
-                  ),
+  text: "I've Verified My Email",
+  isFullWidth: true,
+  onPressed: () =>
+      Navigator.of(context).pushReplacementNamed(AppRoutes.signInScreen),
+),
                   const SizedBox(height: 12),
 
                   AppButton(
