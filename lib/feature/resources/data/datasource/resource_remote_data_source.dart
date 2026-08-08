@@ -11,6 +11,8 @@ abstract class ResourceRemoteDataSource {
   Future<void> addBookmark(String resourceId);
   Future<void> removeBookmark(String resourceId);
   Future<bool> isBookmarked(String resourceId);
+  Future<List<ResourceModel>> getTrendingBooks({int limit = 10});
+Future<List<Map<String, dynamic>>> getContinueReading();
 }
 
 class ResourceRemoteDataSourceImpl implements ResourceRemoteDataSource {
@@ -121,4 +123,35 @@ class ResourceRemoteDataSourceImpl implements ResourceRemoteDataSource {
 
     return response != null;
   }
+
+  @override
+Future<List<ResourceModel>> getTrendingBooks({int limit = 10}) async {
+  final response = await supabaseClient
+      .from('resources')
+      .select()
+      .eq('type', 'book')
+      .order('created_at', ascending: false)
+      .limit(limit);
+
+  return (response as List)
+      .map((json) => ResourceModel.fromJson(json as Map<String, dynamic>))
+      .toList();
+}
+
+@override
+Future<List<Map<String, dynamic>>> getContinueReading() async {
+  final userId = supabaseClient.auth.currentUser?.id;
+  if (userId == null) return [];
+
+  final response = await supabaseClient
+      .from('reading_progress')
+      .select('progress_percent, resources(*)')
+      .eq('user_id', userId)
+      .gt('progress_percent', 0)
+      .lt('progress_percent', 100)
+      .order('updated_at', ascending: false)
+      .limit(10);
+
+  return List<Map<String, dynamic>>.from(response as List);
+}
 }

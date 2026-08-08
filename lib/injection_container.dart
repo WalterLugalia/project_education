@@ -35,6 +35,10 @@ import 'package:project_education/feature/resources/domain/usecase/get_home_feed
 import 'package:project_education/feature/resources/domain/usecase/get_categories_usecase.dart';
 import 'package:project_education/feature/resources/domain/usecase/toggle_bookmark_usecase.dart';
 import 'package:project_education/feature/resources/presentaion/bloc/home_bloc.dart';
+import 'package:project_education/feature/resources/domain/usecase/get_continue_reading_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/get_trending_books_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/search_resources_usecase.dart';
+import 'package:project_education/feature/resources/presentaion/bloc/search_bloc/search_bloc.dart';
 
 // Splash
 import 'package:project_education/feature/splash_screen/prsentaion/Bloc/splash_bloc.dart';
@@ -148,21 +152,25 @@ Future<void> _initSplash() async {
 Future<void> _initResources() async {
   sl.registerFactory<HomeBloc>(
     () => HomeBloc(
-      getHomeFeedUseCase: sl(),
-      getCategoriesUseCase: sl(),
+      getTrendingBooksUseCase: sl(),
+      getContinueReadingUseCase: sl(),
       toggleBookmarkUseCase: sl(),
     ),
   );
 
-  sl.registerLazySingleton<GetHomeFeedUseCase>(() => GetHomeFeedUseCase(sl()));
-  sl.registerLazySingleton<GetCategoriesUseCase>(() => GetCategoriesUseCase(sl()));
+  sl.registerFactory<SearchBloc>(
+    () => SearchBloc(searchResourcesUseCase: sl()),
+  );
+
+  sl.registerLazySingleton<GetTrendingBooksUseCase>(() => GetTrendingBooksUseCase(sl()));
+  sl.registerLazySingleton<GetContinueReadingUseCase>(() => GetContinueReadingUseCase(sl()));
   sl.registerLazySingleton<ToggleBookmarkUseCase>(() => ToggleBookmarkUseCase(sl()));
+  sl.registerLazySingleton<SearchResourcesUseCase>(() => SearchResourcesUseCase(sl()));
+  // NOTE: GetCategoriesUseCase registration stays — Categories is off Home,
+  // but the use case will be reused once Discover exists.
 
   sl.registerLazySingleton<ResourceRepository>(
-    () => ResourceRepositoryImpl(
-      remoteDataSource: sl(),
-      localDataSource: sl(),
-    ),
+    () => ResourceRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()),
   );
 
   sl.registerLazySingleton<ResourceRemoteDataSource>(
@@ -170,8 +178,6 @@ Future<void> _initResources() async {
   );
 
   sl.registerLazySingleton<ResourceLocalDataSource>(
-    () => ResourceLocalDataSourceImpl(
-      cacheBox: Hive.box<String>(HiveConstants.resourceCacheBox),
-    ),
+    () => ResourceLocalDataSourceImpl(cacheBox: Hive.box<String>(HiveConstants.resourceCacheBox)),
   );
 }

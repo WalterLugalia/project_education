@@ -1,4 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:project_education/feature/resources/data/models/resource_model.dart';
+import 'package:project_education/feature/resources/domain/entities/continue_reading_item.dart';
 import '../../domain/entities/resource_entity.dart';
 import '../../domain/entities/category_entity.dart';
 import '../../domain/repositories/resource_repository.dart';
@@ -76,4 +78,19 @@ class ResourceRepositoryImpl implements ResourceRepository {
   Future<bool> isBookmarked(String resourceId) async {
     return remoteDataSource.isBookmarked(resourceId);
   }
+
+  @override
+Future<List<ResourceEntity>> getTrendingBooks() async {
+  return remoteDataSource.getTrendingBooks();
+}
+
+@override
+Future<List<ContinueReadingItem>> getContinueReading() async {
+  final rows = await remoteDataSource.getContinueReading();
+  return rows.map((row) {
+    final resource = ResourceModel.fromJson(row['resources'] as Map<String, dynamic>);
+    final progress = (row['progress_percent'] as num).toDouble();
+    return ContinueReadingItem(resource: resource, progressPercent: progress);
+  }).toList();
+}
 }

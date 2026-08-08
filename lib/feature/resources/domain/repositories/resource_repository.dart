@@ -1,3 +1,5 @@
+import 'package:project_education/feature/resources/domain/entities/continue_reading_item.dart';
+
 import '../entities/resource_entity.dart';
 import '../entities/category_entity.dart';
 
@@ -18,4 +20,6 @@ abstract class ResourceRepository {
   Future<void> toggleBookmark(String resourceId);
 
   Future<bool> isBookmarked(String resourceId);
+  Future<List<ResourceEntity>> getTrendingBooks();
+Future<List<ContinueReadingItem>> getContinueReading();
 }

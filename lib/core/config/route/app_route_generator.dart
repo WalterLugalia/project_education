@@ -7,6 +7,7 @@ import 'package:project_education/feature/authentication/presentaion/pages/forgo
 import 'package:project_education/feature/authentication/presentaion/pages/reset_password_screen.dart';
 import 'package:project_education/feature/authentication/presentaion/pages/change_password_screen.dart';
 import 'package:project_education/feature/resources/presentaion/home_screen.dart';
+import 'package:project_education/feature/resources/presentaion/search_screen.dart';
 import 'package:project_education/feature/splash_screen/prsentaion/Splash_screen.dart';
 import 'package:project_education/feature/onboarding/presentation/onboarding_screen.dart';
 import 'app_routes.dart';
@@ -72,6 +73,11 @@ class AppRouteGenerator {
       case AppRoutes.changePassword:
         return _buildRoute(
           const ChangePasswordScreen(),
+          settings: settings,
+        );
+        case AppRoutes.search:
+        return _buildRoute(
+          const SearchScreen(),
           settings: settings,
         );
 
