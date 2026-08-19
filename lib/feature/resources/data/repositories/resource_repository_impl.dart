@@ -144,4 +144,41 @@ class ResourceRepositoryImpl implements ResourceRepository {
 
   @override
   Future<bool> isDownloaded(String resourceId) => remoteDataSource.isDownloaded(resourceId);
+
+  @override
+  Future<String?> getReadableContent(ResourceEntity resource) async {
+    // Dev.to articles: fetch full markdown body (list sync never pulled it),
+    // cache the text directly since it's small.
+    if (resource.type == ResourceType.article && resource.source == ResourceSource.devTo) {
+      final cached = localDataSource.getCachedArticleContent(resource.id);
+      if (cached != null) return cached;
+
+      if (!await _isOnline) return null;
+
+      if (resource.externalId == null) return null;
+      final body = await remoteDataSource.fetchDevToArticleBody(resource.externalId!);
+      if (body != null) {
+        await localDataSource.cacheArticleContent(resource.id, body);
+      }
+      return body;
+    }
+
+    // Real downloadable files (manual entries with content_url set):
+    // download once, cache file path/size/date, reuse on repeat reads.
+    if (resource.contentFormat != ContentFormat.unavailable && resource.contentUrl != null) {
+      final cachedInfo = localDataSource.getCachedFileInfo(resource.id);
+      if (cachedInfo != null) return cachedInfo['path'] as String;
+
+      if (!await _isOnline) return null;
+      return localDataSource.downloadAndCacheFile(resource.id, resource.contentUrl!);
+    }
+
+    // Genuinely no readable content available — e.g. Open Library books,
+    // where only metadata and an external link exist.
+    return null;
+  }
+
+  @override
+  Future<void> saveReadingProgress(String resourceId, double percent) =>
+      remoteDataSource.upsertReadingProgress(resourceId, percent);
 }

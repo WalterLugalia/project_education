@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/resource_model.dart';
 import '../models/category_model.dart';
@@ -20,6 +22,8 @@ abstract class ResourceRemoteDataSource {
   Future<List<ResourceModel>> getRelatedResources(String resourceId, String? categoryId);
   Future<void> markDownloaded(String resourceId);
   Future<bool> isDownloaded(String resourceId);
+  Future<String?> fetchDevToArticleBody(String externalId);
+  Future<void> upsertReadingProgress(String resourceId, double percent);
 }
 
 const String _resourceSelect = '*, categories(name)';
@@ -262,6 +266,28 @@ class ResourceRemoteDataSourceImpl implements ResourceRemoteDataSource {
         .maybeSingle();
 
     return response != null;
+  }
+
+  @override
+  Future<String?> fetchDevToArticleBody(String externalId) async {
+    final response = await http.get(Uri.parse('https://dev.to/api/articles/$externalId'));
+    if (response.statusCode != 200) return null;
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    return data['body_markdown'] as String?;
+  }
+
+  @override
+  Future<void> upsertReadingProgress(String resourceId, double percent) async {
+    final userId = supabaseClient.auth.currentUser?.id;
+    if (userId == null) return; // guests have no account to sync progress to
+
+    await supabaseClient.from('reading_progress').upsert({
+      'user_id': userId,
+      'resource_id': resourceId,
+      'progress_percent': percent,
+      'updated_at': DateTime.now().toIso8601String(),
+    }, onConflict: 'user_id,resource_id');
   }
 
   List<ResourceModel> _mapList(dynamic response) {

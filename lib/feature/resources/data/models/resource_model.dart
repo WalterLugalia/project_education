@@ -16,6 +16,9 @@ class ResourceModel extends ResourceEntity {
     super.rating,
     super.readingTimeMinutes,
     required super.createdAt,
+    super.contentText,
+    super.contentUrl,
+    super.contentFormat = ContentFormat.unavailable,
   });
 
   factory ResourceModel.fromJson(Map<String, dynamic> json) {
@@ -36,6 +39,9 @@ class ResourceModel extends ResourceEntity {
       rating: (json['rating'] as num?)?.toDouble(),
       readingTimeMinutes: json['reading_time_minutes'] as int?,
       createdAt: DateTime.parse(json['created_at'] as String),
+      contentText: json['content_text'] as String?,
+      contentUrl: json['content_url'] as String?,
+      contentFormat: _formatFromString(json['content_format'] as String? ?? 'unavailable'),
     );
   }
 
@@ -54,6 +60,9 @@ class ResourceModel extends ResourceEntity {
         'rating': rating,
         'reading_time_minutes': readingTimeMinutes,
         'created_at': createdAt.toIso8601String(),
+        'content_text': contentText,
+        'content_url': contentUrl,
+        'content_format': _formatToString(contentFormat),
       };
 
   /// Rehydrates a model from our OWN cached JSON (toJson output), where
@@ -75,6 +84,9 @@ class ResourceModel extends ResourceEntity {
       rating: (json['rating'] as num?)?.toDouble(),
       readingTimeMinutes: json['reading_time_minutes'] as int?,
       createdAt: DateTime.parse(json['created_at'] as String),
+      contentText: json['content_text'] as String?,
+      contentUrl: json['content_url'] as String?,
+      contentFormat: _formatFromString(json['content_format'] as String? ?? 'unavailable'),
     );
   }
 
@@ -129,6 +141,36 @@ class ResourceModel extends ResourceEntity {
         return 'documentation';
       case ResourceType.tutorial:
         return 'tutorial';
+    }
+  }
+
+  static ContentFormat _formatFromString(String value) {
+    switch (value) {
+      case 'markdown':
+        return ContentFormat.markdown;
+      case 'html':
+        return ContentFormat.html;
+      case 'pdf':
+        return ContentFormat.pdf;
+      case 'epub':
+        return ContentFormat.epub;
+      default:
+        return ContentFormat.unavailable;
+    }
+  }
+
+  static String _formatToString(ContentFormat format) {
+    switch (format) {
+      case ContentFormat.markdown:
+        return 'markdown';
+      case ContentFormat.html:
+        return 'html';
+      case ContentFormat.pdf:
+        return 'pdf';
+      case ContentFormat.epub:
+        return 'epub';
+      case ContentFormat.unavailable:
+        return 'unavailable';
     }
   }
 }

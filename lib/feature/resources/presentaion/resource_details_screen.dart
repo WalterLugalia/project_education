@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_education/feature/resources/presentaion/bloc/resource_detail_bloc/resource_details_bloc.dart';
 import 'package:project_education/feature/resources/presentaion/bloc/resource_detail_bloc/resource_details_event.dart';
 import 'package:project_education/feature/resources/presentaion/bloc/resource_detail_bloc/resource_details_state.dart';
+import 'package:project_education/feature/resources/presentaion/reading_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:project_education/core/config/theme/app_colors.dart';
 import 'package:project_education/core/config/route/app_routes.dart';
@@ -155,14 +156,12 @@ class _ResourceDetailsViewState extends State<_ResourceDetailsView> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           _ActionButton(
-                            icon: Icons.menu_book_outlined,
-                            label: 'Read',
-                            onTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Reading screen coming soon')),
-                              );
-                            },
-                          ),
+  icon: Icons.menu_book_outlined,
+  label: 'Read',
+  onTap: () => Navigator.of(context).push(
+    MaterialPageRoute(builder: (_) => ReadingScreen(resource: resource)),
+  ),
+),
                           _ActionButton(
                             icon: Icons.public,
                             label: 'Visit',

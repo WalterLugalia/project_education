@@ -29,4 +29,6 @@ abstract class ResourceRepository {
 
   Future<void> markDownloaded(String resourceId);
   Future<bool> isDownloaded(String resourceId);
+  Future<String?> getReadableContent(ResourceEntity resource);
+Future<void> saveReadingProgress(String resourceId, double percent);
 }

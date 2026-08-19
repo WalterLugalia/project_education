@@ -1,6 +1,7 @@
 enum ResourceSource { openLibrary, devTo, manual }
 
 enum ResourceType { book, article, website, documentation, tutorial }
+enum ContentFormat { markdown, html, pdf, epub, unavailable }
 
 class ResourceEntity {
   final String id;
@@ -13,6 +14,10 @@ class ResourceEntity {
   final String? description;
   final String? categoryId;
   final String? categoryName;
+
+  final String? contentText;
+final String? contentUrl;
+final ContentFormat contentFormat;
 
   final String? coverImageUrl;
   final String resourceUrl;
@@ -37,5 +42,8 @@ class ResourceEntity {
     this.rating,
     this.readingTimeMinutes,
     required this.createdAt,
+    this.contentText,
+    this.contentUrl,
+    required this.contentFormat,
   });
 }
