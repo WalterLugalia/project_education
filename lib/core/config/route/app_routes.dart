@@ -11,4 +11,6 @@ class AppRoutes {
   static const String resetPassword = '/reset-password';
   static const String changePassword = '/change-password';
   static const String search = '/search-screen';
+  static const String discover = '/discover';
+static const String resourceDetails = '/resource-details';
 }

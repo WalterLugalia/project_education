@@ -6,7 +6,9 @@ import 'package:project_education/feature/authentication/presentaion/pages/email
 import 'package:project_education/feature/authentication/presentaion/pages/forgot_password_screen.dart';
 import 'package:project_education/feature/authentication/presentaion/pages/reset_password_screen.dart';
 import 'package:project_education/feature/authentication/presentaion/pages/change_password_screen.dart';
+import 'package:project_education/feature/resources/presentaion/discover_screen.dart';
 import 'package:project_education/feature/resources/presentaion/home_screen.dart';
+import 'package:project_education/feature/resources/presentaion/resource_details_screen.dart';
 import 'package:project_education/feature/resources/presentaion/search_screen.dart';
 import 'package:project_education/feature/splash_screen/prsentaion/Splash_screen.dart';
 import 'package:project_education/feature/onboarding/presentation/onboarding_screen.dart';
@@ -80,6 +82,12 @@ class AppRouteGenerator {
           const SearchScreen(),
           settings: settings,
         );
+        case AppRoutes.discover:
+  return _buildRoute(const DiscoverScreen(), settings: settings);
+
+case AppRoutes.resourceDetails:
+  final resourceId = settings.arguments as String;
+  return _buildRoute(ResourceDetailsScreen(resourceId: resourceId), settings: settings);
 
       default:
         return _buildRoute(

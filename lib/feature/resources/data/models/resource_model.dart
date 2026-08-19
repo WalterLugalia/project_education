@@ -10,6 +10,7 @@ class ResourceModel extends ResourceEntity {
     super.author,
     super.description,
     super.categoryId,
+    super.categoryName,
     super.coverImageUrl,
     required super.resourceUrl,
     super.rating,
@@ -18,6 +19,8 @@ class ResourceModel extends ResourceEntity {
   });
 
   factory ResourceModel.fromJson(Map<String, dynamic> json) {
+    final categoryJson = json['categories'] as Map<String, dynamic>?;
+
     return ResourceModel(
       id: json['id'] as String,
       source: _sourceFromString(json['source'] as String),
@@ -27,6 +30,7 @@ class ResourceModel extends ResourceEntity {
       author: json['author'] as String?,
       description: json['description'] as String?,
       categoryId: json['category_id'] as String?,
+      categoryName: categoryJson?['name'] as String?,
       coverImageUrl: json['cover_image_url'] as String?,
       resourceUrl: json['resource_url'] as String,
       rating: (json['rating'] as num?)?.toDouble(),
@@ -44,12 +48,35 @@ class ResourceModel extends ResourceEntity {
         'author': author,
         'description': description,
         'category_id': categoryId,
+        'category_name': categoryName,
         'cover_image_url': coverImageUrl,
         'resource_url': resourceUrl,
         'rating': rating,
         'reading_time_minutes': readingTimeMinutes,
         'created_at': createdAt.toIso8601String(),
       };
+
+  /// Rehydrates a model from our OWN cached JSON (toJson output), where
+  /// category_name is a flat field rather than a nested join object —
+  /// distinct from fromJson, which parses raw Supabase query responses.
+  factory ResourceModel.fromCachedJson(Map<String, dynamic> json) {
+    return ResourceModel(
+      id: json['id'] as String,
+      source: _sourceFromString(json['source'] as String),
+      externalId: json['external_id'] as String?,
+      type: _typeFromString(json['type'] as String),
+      title: json['title'] as String,
+      author: json['author'] as String?,
+      description: json['description'] as String?,
+      categoryId: json['category_id'] as String?,
+      categoryName: json['category_name'] as String?,
+      coverImageUrl: json['cover_image_url'] as String?,
+      resourceUrl: json['resource_url'] as String,
+      rating: (json['rating'] as num?)?.toDouble(),
+      readingTimeMinutes: json['reading_time_minutes'] as int?,
+      createdAt: DateTime.parse(json['created_at'] as String),
+    );
+  }
 
   static ResourceSource _sourceFromString(String value) {
     switch (value) {

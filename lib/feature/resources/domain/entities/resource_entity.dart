@@ -12,6 +12,7 @@ class ResourceEntity {
   final String? author;
   final String? description;
   final String? categoryId;
+  final String? categoryName;
 
   final String? coverImageUrl;
   final String resourceUrl;
@@ -30,6 +31,7 @@ class ResourceEntity {
     this.author,
     this.description,
     this.categoryId,
+    this.categoryName,
     this.coverImageUrl,
     required this.resourceUrl,
     this.rating,

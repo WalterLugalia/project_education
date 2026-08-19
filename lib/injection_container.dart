@@ -39,6 +39,14 @@ import 'package:project_education/feature/resources/domain/usecase/get_continue_
 import 'package:project_education/feature/resources/domain/usecase/get_trending_books_usecase.dart';
 import 'package:project_education/feature/resources/domain/usecase/search_resources_usecase.dart';
 import 'package:project_education/feature/resources/presentaion/bloc/search_bloc/search_bloc.dart';
+import 'package:project_education/feature/resources/domain/usecase/download_resource_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/get_featured_category_trending_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/get_new_releases_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/get_related_resources_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/get_resource_details_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/is_resource_downloaded_usecase.dart';
+import 'package:project_education/feature/resources/presentaion/bloc/discover_bloc/discover_bloc.dart';
+import 'package:project_education/feature/resources/presentaion/bloc/resource_detail_bloc/resource_details_bloc.dart';
 
 // Splash
 import 'package:project_education/feature/splash_screen/prsentaion/Bloc/splash_bloc.dart';
@@ -158,16 +166,39 @@ Future<void> _initResources() async {
     ),
   );
 
-  sl.registerFactory<SearchBloc>(
-    () => SearchBloc(searchResourcesUseCase: sl()),
+  sl.registerFactory<SearchBloc>(() => SearchBloc(searchResourcesUseCase: sl()));
+
+  sl.registerFactory<DiscoverBloc>(
+    () => DiscoverBloc(
+      getNewReleasesUseCase: sl(),
+      getFeaturedCategoryTrendingUseCase: sl(),
+      toggleBookmarkUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory<ResourceDetailsBloc>(
+    () => ResourceDetailsBloc(
+      getResourceDetailsUseCase: sl(),
+      getRelatedResourcesUseCase: sl(),
+      toggleBookmarkUseCase: sl(),
+      downloadResourceUseCase: sl(),
+      isResourceDownloadedUseCase: sl(),
+      repository: sl(),
+    ),
   );
 
   sl.registerLazySingleton<GetTrendingBooksUseCase>(() => GetTrendingBooksUseCase(sl()));
   sl.registerLazySingleton<GetContinueReadingUseCase>(() => GetContinueReadingUseCase(sl()));
   sl.registerLazySingleton<ToggleBookmarkUseCase>(() => ToggleBookmarkUseCase(sl()));
   sl.registerLazySingleton<SearchResourcesUseCase>(() => SearchResourcesUseCase(sl()));
-  // NOTE: GetCategoriesUseCase registration stays — Categories is off Home,
-  // but the use case will be reused once Discover exists.
+  sl.registerLazySingleton<GetNewReleasesUseCase>(() => GetNewReleasesUseCase(sl()));
+  sl.registerLazySingleton<GetFeaturedCategoryTrendingUseCase>(
+    () => GetFeaturedCategoryTrendingUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetResourceDetailsUseCase>(() => GetResourceDetailsUseCase(sl()));
+  sl.registerLazySingleton<GetRelatedResourcesUseCase>(() => GetRelatedResourcesUseCase(sl()));
+  sl.registerLazySingleton<DownloadResourceUseCase>(() => DownloadResourceUseCase(sl()));
+  sl.registerLazySingleton<IsResourceDownloadedUseCase>(() => IsResourceDownloadedUseCase(sl()));
 
   sl.registerLazySingleton<ResourceRepository>(
     () => ResourceRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()),
