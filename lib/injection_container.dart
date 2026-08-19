@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
+import 'package:project_education/feature/resources/presentaion/bloc/reading_bloc/reading_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:project_education/core/constants/hive_constants.dart';
 
@@ -25,20 +26,33 @@ import 'package:project_education/feature/authentication/domain/usecase/get_cach
 import 'package:project_education/feature/authentication/domain/usecase/sign_out_usecase.dart';
 import 'package:project_education/feature/authentication/presentaion/bloc/auth_bloc.dart';
 
-
-// Resources
-import 'package:project_education/feature/resources/data/datasource/resource_remote_data_source.dart';
-import 'package:project_education/feature/resources/data/datasource/resource_local_data_source.dart';
-import 'package:project_education/feature/resources/data/repositories/resource_repository_impl.dart';
+// Resources — domain
+import 'package:project_education/feature/resources/domain/entities/resource_entity.dart';
 import 'package:project_education/feature/resources/domain/repositories/resource_repository.dart';
-import 'package:project_education/feature/resources/domain/usecase/get_home_feed_usecase.dart';
 import 'package:project_education/feature/resources/domain/usecase/get_categories_usecase.dart';
 import 'package:project_education/feature/resources/domain/usecase/toggle_bookmark_usecase.dart';
-import 'package:project_education/feature/resources/presentaion/bloc/home_bloc.dart';
 import 'package:project_education/feature/resources/domain/usecase/get_continue_reading_usecase.dart';
 import 'package:project_education/feature/resources/domain/usecase/get_trending_books_usecase.dart';
 import 'package:project_education/feature/resources/domain/usecase/search_resources_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/download_resource_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/get_featured_category_trending_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/get_new_releases_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/get_related_resources_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/get_resource_details_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/is_resource_downloaded_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/get_readable_content_usecase.dart';
+import 'package:project_education/feature/resources/domain/usecase/save_reading_progress_usecase.dart';
+
+// Resources — data
+import 'package:project_education/feature/resources/data/datasource/resource_remote_data_source.dart';
+import 'package:project_education/feature/resources/data/datasource/resource_local_data_source.dart';
+import 'package:project_education/feature/resources/data/repositories/resource_repository_impl.dart';
+
+// Resources — presentation
+import 'package:project_education/feature/resources/presentaion/bloc/home_bloc.dart';
 import 'package:project_education/feature/resources/presentaion/bloc/search_bloc/search_bloc.dart';
+import 'package:project_education/feature/resources/presentaion/bloc/discover_bloc/discover_bloc.dart';
+import 'package:project_education/feature/resources/presentaion/bloc/resource_detail_bloc/resource_details_bloc.dart';
 
 // Splash
 import 'package:project_education/feature/splash_screen/prsentaion/Bloc/splash_bloc.dart';
@@ -147,9 +161,8 @@ Future<void> _initSplash() async {
   );
 }
 
-
-
 Future<void> _initResources() async {
+  // Blocs
   sl.registerFactory<HomeBloc>(
     () => HomeBloc(
       getTrendingBooksUseCase: sl(),
@@ -158,21 +171,61 @@ Future<void> _initResources() async {
     ),
   );
 
-  sl.registerFactory<SearchBloc>(
-    () => SearchBloc(searchResourcesUseCase: sl()),
+  sl.registerFactory<SearchBloc>(() => SearchBloc(searchResourcesUseCase: sl()));
+
+  sl.registerFactory<DiscoverBloc>(
+    () => DiscoverBloc(
+      getNewReleasesUseCase: sl(),
+      getFeaturedCategoryTrendingUseCase: sl(),
+      toggleBookmarkUseCase: sl(),
+    ),
   );
 
+  sl.registerFactory<ResourceDetailsBloc>(
+    () => ResourceDetailsBloc(
+      getResourceDetailsUseCase: sl(),
+      getRelatedResourcesUseCase: sl(),
+      toggleBookmarkUseCase: sl(),
+      downloadResourceUseCase: sl(),
+      isResourceDownloadedUseCase: sl(),
+      repository: sl(),
+    ),
+  );
+
+  // ReadingBloc needs the selected ResourceEntity at creation time, so it's
+  // registered with a factory param rather than sl<ReadingBloc>() directly —
+  // called as sl<ReadingBloc>(param1: resource) from ReadingScreen.
+  sl.registerFactoryParam<ReadingBloc, ResourceEntity, void>(
+    (resource, _) => ReadingBloc(
+      getReadableContentUseCase: sl(),
+      saveReadingProgressUseCase: sl(),
+      resource: resource,
+    ),
+  );
+
+  // Use cases
   sl.registerLazySingleton<GetTrendingBooksUseCase>(() => GetTrendingBooksUseCase(sl()));
   sl.registerLazySingleton<GetContinueReadingUseCase>(() => GetContinueReadingUseCase(sl()));
   sl.registerLazySingleton<ToggleBookmarkUseCase>(() => ToggleBookmarkUseCase(sl()));
   sl.registerLazySingleton<SearchResourcesUseCase>(() => SearchResourcesUseCase(sl()));
-  // NOTE: GetCategoriesUseCase registration stays — Categories is off Home,
-  // but the use case will be reused once Discover exists.
+  sl.registerLazySingleton<GetCategoriesUseCase>(() => GetCategoriesUseCase(sl()));
+  sl.registerLazySingleton<GetNewReleasesUseCase>(() => GetNewReleasesUseCase(sl()));
+  sl.registerLazySingleton<GetFeaturedCategoryTrendingUseCase>(
+    () => GetFeaturedCategoryTrendingUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetResourceDetailsUseCase>(() => GetResourceDetailsUseCase(sl()));
+  sl.registerLazySingleton<GetRelatedResourcesUseCase>(() => GetRelatedResourcesUseCase(sl()));
+  sl.registerLazySingleton<DownloadResourceUseCase>(() => DownloadResourceUseCase(sl()));
+  sl.registerLazySingleton<IsResourceDownloadedUseCase>(() => IsResourceDownloadedUseCase(sl()));
+  sl.registerLazySingleton<GetReadableContentUseCase>(() => GetReadableContentUseCase(sl()));
+  sl.registerLazySingleton<SaveReadingProgressUseCase>(() => SaveReadingProgressUseCase(sl()));
 
+  // Repository
   sl.registerLazySingleton<ResourceRepository>(
     () => ResourceRepositoryImpl(remoteDataSource: sl(), localDataSource: sl()),
   );
 
+  // Data sources
   sl.registerLazySingleton<ResourceRemoteDataSource>(
     () => ResourceRemoteDataSourceImpl(supabaseClient: sl()),
   );

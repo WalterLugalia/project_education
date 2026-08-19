@@ -8,6 +8,7 @@ import 'package:project_education/feature/resources/presentaion/bloc/home_bloc.d
 import 'package:project_education/feature/resources/presentaion/bloc/home_event.dart';
 import 'package:project_education/feature/resources/presentaion/bloc/home_state.dart';
 import 'package:project_education/injection_container.dart';
+import 'package:project_education/shared/widgets/app_bottom_nav_bar.dart';
 
 
 class HomeScreen extends StatelessWidget {
@@ -182,12 +183,19 @@ class _HomeViewState extends State<_HomeView> {
           },
         ),
       ),
-      bottomNavigationBar: _BottomNavBar(
-        currentIndex: _currentTab,
-        onTap: _onTabTapped,
-        labels: _tabs,
-        icons: _tabIcons,
-      ),
+      bottomNavigationBar: AppBottomNavBar(
+  currentIndex: 0,
+  onTap: (index) {
+    if (index == 0) return;
+    if (index == 1) {
+      Navigator.of(context).pushReplacementNamed(AppRoutes.discover);
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Coming soon')),
+    );
+  },
+),
     );
   }
 }
