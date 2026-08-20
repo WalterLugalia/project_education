@@ -1,5 +1,16 @@
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
+import 'package:project_education/feature/profile/data/datasource/profile_remote_data_source.dart';
+import 'package:project_education/feature/profile/data/repositories/profile_repository.dart';
+import 'package:project_education/feature/profile/data/repositories/profile_repository_impl.dart';
+import 'package:project_education/feature/profile/domain/usecase/check_username_available_usecase.dart';
+import 'package:project_education/feature/profile/domain/usecase/get_profile_stats_usecase.dart';
+import 'package:project_education/feature/profile/domain/usecase/get_profile_usecase.dart';
+import 'package:project_education/feature/profile/domain/usecase/log_reading_session_usecase.dart';
+import 'package:project_education/feature/profile/domain/usecase/log_resource_view_usecase.dart';
+import 'package:project_education/feature/profile/domain/usecase/update_profile_usecase.dart';
+import 'package:project_education/feature/profile/domain/usecase/upload_avatar_usecase.dart';
+import 'package:project_education/feature/profile/presentation/bloc/profile_bloc.dart';
 import 'package:project_education/feature/resources/presentaion/bloc/reading_bloc/reading_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:project_education/core/constants/hive_constants.dart';
@@ -64,6 +75,7 @@ Future<void> initDependencies() async {
   await _initAuth();
   await _initSplash();
   await _initResources();
+  await _initProfile();
 
   // Other features' init calls go here
 }
@@ -195,12 +207,14 @@ Future<void> _initResources() async {
   // ReadingBloc needs the selected ResourceEntity at creation time, so it's
   // registered with a factory param rather than sl<ReadingBloc>() directly —
   // called as sl<ReadingBloc>(param1: resource) from ReadingScreen.
+  
   sl.registerFactoryParam<ReadingBloc, ResourceEntity, void>(
     (resource, _) => ReadingBloc(
-      getReadableContentUseCase: sl(),
-      saveReadingProgressUseCase: sl(),
-      resource: resource,
-    ),
+    getReadableContentUseCase: sl(),
+    saveReadingProgressUseCase: sl(),
+    logReadingSessionUseCase: sl(),
+    resource: resource,
+  ),
   );
 
   // Use cases
@@ -233,4 +247,27 @@ Future<void> _initResources() async {
   sl.registerLazySingleton<ResourceLocalDataSource>(
     () => ResourceLocalDataSourceImpl(cacheBox: Hive.box<String>(HiveConstants.resourceCacheBox)),
   );
+}
+
+
+
+Future<void> _initProfile() async {
+  sl.registerFactory<ProfileBloc>(() => ProfileBloc(
+    getProfileUseCase: sl(),
+    getProfileStatsUseCase: sl(),
+    updateProfileUseCase: sl(),
+    uploadAvatarUseCase: sl(),
+    checkUsernameAvailableUseCase: sl(),
+  ));
+
+  sl.registerLazySingleton<GetProfileUseCase>(() => GetProfileUseCase(sl()));
+  sl.registerLazySingleton<GetProfileStatsUseCase>(() => GetProfileStatsUseCase(sl()));
+  sl.registerLazySingleton<UpdateProfileUseCase>(() => UpdateProfileUseCase(sl()));
+  sl.registerLazySingleton<UploadAvatarUseCase>(() => UploadAvatarUseCase(sl()));
+  sl.registerLazySingleton<CheckUsernameAvailableUseCase>(() => CheckUsernameAvailableUseCase(sl()));
+  sl.registerLazySingleton<LogResourceViewUseCase>(() => LogResourceViewUseCase(sl()));
+  sl.registerLazySingleton<LogReadingSessionUseCase>(() => LogReadingSessionUseCase(sl()));
+
+  sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl(remoteDataSource: sl()));
+  sl.registerLazySingleton<ProfileRemoteDataSource>(() => ProfileRemoteDataSourceImpl(supabaseClient: sl()));
 }

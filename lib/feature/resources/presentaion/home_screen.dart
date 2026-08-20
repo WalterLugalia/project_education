@@ -191,6 +191,10 @@ class _HomeViewState extends State<_HomeView> {
       Navigator.of(context).pushReplacementNamed(AppRoutes.discover);
       return;
     }
+    if (index == 4) {
+      Navigator.of(context).pushReplacementNamed(AppRoutes.profile);
+      return;
+    }
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Coming soon')),
     );

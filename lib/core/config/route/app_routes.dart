@@ -13,4 +13,5 @@ class AppRoutes {
   static const String search = '/search-screen';
   static const String discover = '/discover';
 static const String resourceDetails = '/resource-details';
+static const String profile = '/profile';
 }

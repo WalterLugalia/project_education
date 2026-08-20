@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project_education/feature/profile/domain/usecase/log_resource_view_usecase.dart';
 import 'package:project_education/feature/resources/presentaion/bloc/resource_detail_bloc/resource_details_bloc.dart';
 import 'package:project_education/feature/resources/presentaion/bloc/resource_detail_bloc/resource_details_event.dart';
 import 'package:project_education/feature/resources/presentaion/bloc/resource_detail_bloc/resource_details_state.dart';
@@ -158,15 +159,21 @@ class _ResourceDetailsViewState extends State<_ResourceDetailsView> {
                           _ActionButton(
   icon: Icons.menu_book_outlined,
   label: 'Read',
-  onTap: () => Navigator.of(context).push(
-    MaterialPageRoute(builder: (_) => ReadingScreen(resource: resource)),
-  ),
+  onTap: () {
+    sl<LogResourceViewUseCase>().call(resource.id);
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => ReadingScreen(resource: resource)),
+    );
+  },
 ),
-                          _ActionButton(
-                            icon: Icons.public,
-                            label: 'Visit',
-                            onTap: () => _openUrl(resource.resourceUrl),
-                          ),
+_ActionButton(
+  icon: Icons.public,
+  label: 'Visit',
+  onTap: () {
+    sl<LogResourceViewUseCase>().call(resource.id);
+    _openUrl(resource.resourceUrl);
+  },
+),
                           _ActionButton(
                             icon: Icons.download_outlined,
                             label: loaded.isDownloaded ? 'Saved' : 'Download',

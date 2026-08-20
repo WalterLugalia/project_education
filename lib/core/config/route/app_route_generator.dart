@@ -6,6 +6,7 @@ import 'package:project_education/feature/authentication/presentaion/pages/email
 import 'package:project_education/feature/authentication/presentaion/pages/forgot_password_screen.dart';
 import 'package:project_education/feature/authentication/presentaion/pages/reset_password_screen.dart';
 import 'package:project_education/feature/authentication/presentaion/pages/change_password_screen.dart';
+import 'package:project_education/feature/profile/presentation/profile_screen.dart';
 import 'package:project_education/feature/resources/presentaion/discover_screen.dart';
 import 'package:project_education/feature/resources/presentaion/home_screen.dart';
 import 'package:project_education/feature/resources/presentaion/resource_details_screen.dart';
@@ -88,6 +89,9 @@ class AppRouteGenerator {
 case AppRoutes.resourceDetails:
   final resourceId = settings.arguments as String;
   return _buildRoute(ResourceDetailsScreen(resourceId: resourceId), settings: settings);
+
+  case AppRoutes.profile:
+  return _buildRoute(const ProfileScreen(), settings: settings);
 
       default:
         return _buildRoute(

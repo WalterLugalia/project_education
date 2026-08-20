@@ -8,6 +8,7 @@ class UserEntity extends Equatable {
   final String? displayName;
   final String? photoUrl;
   final bool isEmailVerified;
+  final DateTime? createdAt;
 
   const UserEntity({
     required this.uid,
@@ -17,6 +18,7 @@ class UserEntity extends Equatable {
     this.displayName,
     this.photoUrl,
     this.isEmailVerified = false,
+    this.createdAt,
   });
 
   @override
@@ -28,5 +30,6 @@ class UserEntity extends Equatable {
         displayName,
         photoUrl,
         isEmailVerified,
+        createdAt,
       ];
 }

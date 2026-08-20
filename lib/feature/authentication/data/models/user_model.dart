@@ -10,6 +10,7 @@ class UserModel extends UserEntity {
     super.displayName,
     super.photoUrl,
     super.isEmailVerified = false,
+    super.createdAt,
   });
 
   /// Builds a [UserModel] from a Supabase [User].
@@ -29,6 +30,7 @@ class UserModel extends UserEntity {
       displayName: metadata['display_name'] as String?,
       photoUrl: metadata['photo_url'] as String?,
       isEmailVerified: user.emailConfirmedAt != null,
+      createdAt: DateTime.tryParse(user.createdAt),
     );
   }
 
