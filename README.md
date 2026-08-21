@@ -52,7 +52,7 @@ Previously accessed and downloaded resources can remain available when there is 
 - Dart
 - Supabase
 - Hive
-- Riverpod / BLoC
+- BLoC
 - Clean Architecture
 - Open Library API
 - GoRouter
